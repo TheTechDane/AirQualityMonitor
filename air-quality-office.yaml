@@ -1,0 +1,174 @@
+esphome:
+  name: air-quality-office
+  friendly_name: Air Quality Office
+
+esp32:
+  board: esp32-c6-devkitc-1
+  framework:
+    type: esp-idf
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "ixrxDO8pFdi/Du12W6IGIW+hPh2GXquUadV7QqGdmsg="
+
+ota:
+  - platform: esphome
+    password: "5314e56e147aa5f16f2524cdb60bc62e"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Air-Quality-Office"
+    password: "t0Ogjbkmnu2S"
+
+captive_portal:
+
+time:
+  - platform: homeassistant
+    id: ha_time
+
+font:
+  - file: "gfonts://PT Sans Narrow"
+    id: lable_font
+    size: 15
+#  - file:
+#      type: gfonts
+#      family: PT Sans Narrow
+#      weight: 700
+#    id: txt_font
+#    size: 30
+#  - file:
+#      type: gfonts
+#      family: Rationale
+#    id: txt_font
+#    size: 40
+  - file:
+      type: gfonts
+      family: Smooch Sans
+      weight: 700
+    id: txt_font
+    size: 40
+
+i2c:
+  sda: GPIO22
+  scl: GPIO23
+  scl_pullup_enabled: True
+  sda_pullup_enabled: True
+  scan: true
+  id: bus_a
+
+# Example configuration entry
+sensor:
+  - platform: sen6x
+    type: SEN66
+    id: qualitySense
+    pm_1_0:
+      id: pm_1_0
+      name: PM <1µm Weight concentration
+    pm_2_5:
+      id: pm_2_5
+      name: PM <2.5µm Weight concentration
+    pm_4_0:
+      id: pm_4_0
+      name: PM <4µm Weight concentration
+    pm_10_0:
+      id: pm_10_0
+      name: PM <10µm Weight concentration
+    temperature:
+      id: temp
+      name: Temperature
+    humidity:
+      id: humidity
+      name: Humidity
+    voc:
+      id: voc
+      name: VOC
+    nox:
+      id: nox
+      name: NOx
+    co2:
+      id: co2
+      name: Carbon Dioxide
+      on_value:
+          then:
+            - component.update: epaper_display
+
+#Display
+spi:
+  id: bus1
+  clk_pin: GPIO19
+  mosi_pin: GPIO18
+
+display:
+  ## Currently is the new epaper platform not partial update
+  ## 128x296
+  - platform: waveshare_epaper
+    id: epaper_display
+    model: 2.90inV2
+    spi_id: bus1
+    cs_pin: GPIO01
+    dc_pin: GPIO21
+    busy_pin: GPIO02
+    reset_pin: GPIO0
+    rotation: 90
+    update_interval: 20s
+    full_update_every: 3
+    lambda: |-
+      int top = 0;
+      int top1 = 52;
+      int top2 = 106;
+      int div1 = 74;
+      int div2 = 148;
+      int div3 = 222;
+      int txt_offset = 12;
+
+      //Top Line PM
+      it.print(0, top, id(lable_font), TextAlign::TOP_LEFT, "PM 1.0");
+      it.printf(div1-2, top+txt_offset, id(txt_font), TextAlign::TOP_RIGHT, "%.1f", id(pm_1_0).state);
+      it.line(div1, top, div1, top1-2);
+
+      it.print(div1+2, top, id(lable_font), TextAlign::TOP_LEFT, "PM 2.5");
+      it.printf(div2-2, top+txt_offset, id(txt_font), TextAlign::TOP_RIGHT, "%.1f", id(pm_2_5).state); 
+      it.line(div2, top, div2, top1-2);
+
+      it.print(div2+2, top, id(lable_font), TextAlign::TOP_LEFT, "PM 4.0");
+      it.printf(div3-2, top+txt_offset, id(txt_font), TextAlign::TOP_RIGHT, "%.1f", id(pm_4_0).state);
+      it.line(div3, top, div3, top1-2);
+
+      it.print(div3+2, top, id(lable_font), TextAlign::TOP_LEFT, "PM 10.0");
+      it.printf(295, top+txt_offset, id(txt_font), TextAlign::TOP_RIGHT, "%.1f", id(pm_10_0).state);
+
+      //Mid line
+      it.line(0,52,296,52);
+      it.print(0, top1 + 2, id(lable_font), TextAlign::TOP_LEFT, "CO2");
+      it.printf(div1-2, top1+txt_offset, id(txt_font), TextAlign::TOP_RIGHT, "%.0f", id(co2).state);
+      it.line(div1, top1+2, div1, top2-2);
+      
+      it.print(div1+2, top1, id(lable_font), TextAlign::TOP_LEFT, "VOC");
+      it.printf(div2-2, top1+txt_offset, id(txt_font), TextAlign::TOP_RIGHT, "%.0f", id(voc).state); 
+      it.line(div2, top1, div2, top2-2);
+
+      it.print(div2+2, top1, id(lable_font), TextAlign::TOP_LEFT, "NOx");
+      it.printf(div3-2, top1+txt_offset, id(txt_font), TextAlign::TOP_RIGHT, "%.0f", id(nox).state);
+      it.line(div3, top1, div3, top2-2);
+
+      it.print(div3+2, top1, id(lable_font), TextAlign::TOP_LEFT, "HCHO");
+      it.printf(295, top1+txt_offset, id(txt_font), TextAlign::TOP_RIGHT, "%.10", 0.0);
+
+      //Lower Line
+      it.line(0,top2,296,top2);
+      it.line(175, top2+2, 175, 126);
+      it.printf(180, top2+2, id(lable_font), TextAlign::TOP_LEFT, "%.1f°", id(temp).state);
+      it.printf(220, top2+2, id(lable_font), TextAlign::TOP_LEFT, "%.1f%%", id(humidity).state);
+      it.strftime(260, top2+2, id(lable_font), "%H:%M", id(ha_time).now());
+
+      ESP_LOGD("epaper", "reflash......");
+    
+    
