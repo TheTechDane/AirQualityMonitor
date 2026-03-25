@@ -1,5 +1,6 @@
 # Air Quality Monitor
 This is a small Airmonitor that monitors 
+![alt text](<images/AQM front.png>)
 
 Particle size range	PM1.0, PM2.5, PM4 and PM10, Humitity, Temperature, CO₂, VOC, Formaltehyd.
 
@@ -8,10 +9,11 @@ Both reported on the Display and as a ESPHome device in Home Asssistants
 
 
 
-Here is the YAML File for the Device: [Link]()
-3D Model: [Bambulab]()
+Here is the YAML File for the Device: [link](air-quality-office.yaml)
+3D Model: [Bambulab](https://makerworld.com/en/models/2572064-air-quality-monitor#profileId-2835572)
 
 ## Hardware
+![alt text](<images/AQM HW.png>)
 ### Multi Sensor
 Senserion SEN66 : https://sensirion.com/products/catalog/SEN66Sensing platform for PM, RH/T, VOC, NOx and CO2 measurements
 
@@ -25,3 +27,4 @@ WeAct
 ### Processor
 Seeed ESP32c6 (can be a c3 as well) https://www.seeedstudio.com/Seeed-Studio-XIAO-ESP32C6-p-5884.html
 
+![alt text](<images/AQM Buttom.png>)
