@@ -1,6 +1,25 @@
+# ============================================================
+#  Air Quality Monitor — ESPHome
+#  Hardware : ESP32 + Sensirion SEN66 + WeAct 2.9" b/w e-paper
+#  HA link  : Native API
+#  Version 2.0 
+# ============================================================
+substitutions:
+  device_name:      air-quality-monitor
+  friendly_name:    "Air Quality Monitor"
+  sensor_interval:  "30s"
+  display_interval: "60s"
+
+# ------------------------------------------------------------
+#  Core
+# ------------------------------------------------------------
 esphome:
-  name: air-quality-office
-  friendly_name: Air Quality Office
+  name: ${device_name}
+  friendly_name: ${friendly_name}
+  on_boot:
+    priority: 200
+    then:
+      - component.update: epaper_display
 
 esp32:
   board: esp32-c6-devkitc-1
@@ -33,22 +52,12 @@ captive_portal:
 time:
   - platform: homeassistant
     id: ha_time
+    timezone: "Europe/Copenhagen"
 
 font:
   - file: "gfonts://PT Sans Narrow"
     id: lable_font
     size: 15
-#  - file:
-#      type: gfonts
-#      family: PT Sans Narrow
-#      weight: 700
-#    id: txt_font
-#    size: 30
-#  - file:
-#      type: gfonts
-#      family: Rationale
-#    id: txt_font
-#    size: 40
   - file:
       type: gfonts
       family: Smooch Sans
@@ -63,42 +72,246 @@ i2c:
   sda_pullup_enabled: True
   scan: true
   id: bus_a
+  frequency: 100000
 
 # Example configuration entry
 sensor:
   - platform: sen6x
     type: SEN66
     id: qualitySense
+    update_interval: ${sensor_interval}
     pm_1_0:
       id: pm_1_0
-      name: PM <1µm Weight concentration
+      name: "PM 1"
+      unit_of_measurement: "µg/m³"
+      accuracy_decimals: 1
+      filters:
+        - sliding_window_moving_average:
+            window_size: 5
+            send_every: 1
     pm_2_5:
       id: pm_2_5
-      name: PM <2.5µm Weight concentration
+      name: "PM 2.5"
+      unit_of_measurement: "µg/m³"
+      accuracy_decimals: 1
+      filters:
+        - sliding_window_moving_average:
+            window_size: 5
+            send_every: 1
     pm_4_0:
       id: pm_4_0
-      name: PM <4µm Weight concentration
+      name: "PM 4"
+      unit_of_measurement: "µg/m³"
+      accuracy_decimals: 1
+      filters:
+        - sliding_window_moving_average:
+            window_size: 5
+            send_every: 1
     pm_10_0:
       id: pm_10_0
-      name: PM <10µm Weight concentration
+      name: "PM 10"
+      unit_of_measurement: "µg/m³"
+      accuracy_decimals: 1
+      filters:
+        - sliding_window_moving_average:
+            window_size: 5
+            send_every: 1
     temperature:
       id: temp
-      name: Temperature
+      name: "Temperature"
+      unit_of_measurement: "°C"
+      accuracy_decimals: 1
     humidity:
       id: humidity
-      name: Humidity
+      name: "Humidity"
+      unit_of_measurement: "%"
+      accuracy_decimals: 1
     voc:
       id: voc
-      name: VOC
+      name: "VOC Index"
+      accuracy_decimals: 0
+      filters:
+        - sliding_window_moving_average:
+            window_size: 5
+            send_every: 1
     nox:
       id: nox
-      name: NOx
+      name: "NOx index"
+      accuracy_decimals: 0
+      filters:
+        - sliding_window_moving_average:
+            window_size: 5
+            send_every: 1
     co2:
       id: co2
-      name: Carbon Dioxide
+      name: "CO2"
+      unit_of_measurement: "ppm"
+      accuracy_decimals: 0
+      filters:
+        - sliding_window_moving_average:
+            window_size: 5
+            send_every: 1
       on_value:
           then:
             - component.update: epaper_display
+
+  - platform: wifi_signal
+    name: "WiFi Signal"
+    update_interval: 60s
+
+# ============================================================
+#  TEXT SENSORS — severity level per metric
+#
+#  Each publishes one of: "good" | "elevated" | "critical" | "unknown"
+#  These appear as individual entities in HA and are ideal for
+#  dashboard state-color cards and automation triggers.
+#
+#  Thresholds (WHO/EU guidelines; PM1+PM4 interpolated):
+#  +---------+-----------+-------------+------------+
+#  | Metric  |   Good    |  Elevated   |  Critical  |
+#  +---------+-----------+-------------+------------+
+#  | PM1     | <  5 ug/m | 5-15  ug/m  | > 15 ug/m  |
+#  | PM2.5   | < 12 ug/m | 12-35 ug/m  | > 35 ug/m  |
+#  | PM4     | < 15 ug/m | 15-40 ug/m  | > 40 ug/m  |
+#  | PM10    | < 20 ug/m | 20-50 ug/m  | > 50 ug/m  |
+#  | CO2     | < 800 ppm | 800-1200ppm | > 1200 ppm |
+#  | VOC idx | < 150     | 150-250     | > 250      |
+#  | NOx idx | <  20     | 20-150      | > 150      |
+#  +---------+-----------+-------------+------------+
+# ============================================================
+text_sensor:
+  - platform: template
+    name: "PM1 Status"
+    id: pm1_status
+    icon: mdi:air-filter
+    update_interval: ${sensor_interval}
+    lambda: |-
+      if (isnan(id(pm_1_0).state))           return {"unknown"};
+      if (id(pm_1_0).state < 5.0f)           return {"good"};
+      else if (id(pm_1_0).state < 15.0f)     return {"elevated"};
+      else                                   return {"critical"};
+
+  - platform: template
+    name: "PM2.5 Status"
+    id: pm25_status
+    icon: mdi:air-filter
+    update_interval: ${sensor_interval}
+    lambda: |-
+      if (isnan(id(pm_2_5).state))          return {"unknown"};
+      if (id(pm_2_5).state < 12.0f)         return {"good"};
+      else if (id(pm_2_5).state < 35.0f)    return {"elevated"};
+      else                                  return {"critical"};
+
+  - platform: template
+    name: "PM4 Status"
+    id: pm4_status
+    icon: mdi:air-filter
+    update_interval: ${sensor_interval}
+    lambda: |-
+      if (isnan(id(pm_4_0).state))           return {"unknown"};
+      if (id(pm_4_0).state < 15.0f)          return {"good"};
+      else if (id(pm_4_0).state < 40.0f)     return {"elevated"};
+      else                                   return {"critical"};
+
+  - platform: template
+    name: "PM10 Status"
+    id: pm10_status
+    icon: mdi:air-filter
+    update_interval: ${sensor_interval}
+    lambda: |-
+      if (isnan(id(pm_10_0).state))          return {"unknown"};
+      if (id(pm_10_0).state < 20.0f)         return {"good"};
+      else if (id(pm_10_0).state < 50.0f)    return {"elevated"};
+      else                                   return {"critical"};
+
+  - platform: template
+    name: "CO2 Status"
+    id: co2_status
+    icon: mdi:molecule-co2
+    update_interval: ${sensor_interval}
+    lambda: |-
+      if (isnan(id(co2).state))           return {"unknown"};
+      if (id(co2).state < 800.0f)         return {"good"};
+      else if (id(co2).state < 1200.0f)   return {"elevated"};
+      else                                return {"critical"};
+
+  - platform: template
+    name: "VOC Status"
+    id: voc_status
+    icon: mdi:chemical-weapon
+    update_interval: ${sensor_interval}
+    lambda: |-
+      if (isnan(id(voc).state))           return {"unknown"};
+      if (id(voc).state < 150.0f)         return {"good"};
+      else if (id(voc).state < 250.0f)    return {"elevated"};
+      else                                return {"critical"};
+
+  - platform: template
+    name: "NOx Status"
+    id: nox_status
+    icon: mdi:smoke
+    update_interval: ${sensor_interval}
+    lambda: |-
+      if (isnan(id(nox).state))           return {"unknown"};
+      if (id(nox).state < 20.0f)          return {"good"};
+      else if (id(nox).state < 150.0f)    return {"elevated"};
+      else                                return {"critical"};
+
+  # Worst-case rollup — single entity for HA dashboard + automations
+  - platform: template
+    name: "Overall Air Quality"
+    id: overall_status
+    icon: mdi:air-quality
+    update_interval: ${sensor_interval}
+    lambda: |-
+      bool crit =
+        id(pm1_status).state  == "critical" ||
+        id(pm25_status).state == "critical" ||
+        id(pm4_status).state  == "critical" ||
+        id(pm10_status).state == "critical" ||
+        id(co2_status).state  == "critical" ||
+        id(voc_status).state  == "critical" ||
+        id(nox_status).state  == "critical";
+      bool elev =
+        id(pm1_status).state  == "elevated" ||
+        id(pm25_status).state == "elevated" ||
+        id(pm4_status).state  == "elevated" ||
+        id(pm10_status).state == "elevated" ||
+        id(co2_status).state  == "elevated" ||
+        id(voc_status).state  == "elevated" ||
+        id(nox_status).state  == "elevated";
+      if (crit) return {"critical"};
+      if (elev) return {"elevated"};
+      return {"good"};
+
+  - platform: wifi_info
+    ip_address:
+      name: "IP Address"
+    ssid:
+      name: "Connected SSID"
+
+# ============================================================
+#  BINARY SENSORS
+#  Use as triggers in HA automations.
+#  device_class: problem integrates cleanly with HA alerts.
+# ============================================================
+binary_sensor:
+  # true when ANY metric is critical
+  - platform: template
+    name: "Air Quality Alert"
+    id: air_alert
+    device_class: problem
+    lambda: |-
+      return id(overall_status).state == "critical";
+
+  # true when ANY metric is elevated or critical
+  - platform: template
+    name: "Air Quality Warning"
+    id: air_warning
+    device_class: problem
+    lambda: |-
+      return (id(overall_status).state == "elevated" ||
+              id(overall_status).state == "critical");
 
 #Display
 spi:
@@ -109,65 +322,91 @@ spi:
 display:
   ## Currently is the new epaper platform not partial update
   ## 128x296
-  - platform: waveshare_epaper
+  - platform: epaper_spi
     id: epaper_display
-    model: 2.90inV2
+    model:  WeAct-2.9in-3c
     spi_id: bus1
     cs_pin: GPIO01
     dc_pin: GPIO21
     busy_pin: GPIO02
     reset_pin: GPIO0
     rotation: 90
-    update_interval: 20s
+    update_interval: ${display_interval}
     full_update_every: 3
     lambda: |-
-      int top = 0;
-      int top1 = 52;
-      int top2 = 106;
-      int div1 = 74;
-      int div2 = 148;
-      int div3 = 222;
-      int txt_offset = 12;
+      //Constanst for rendering -- NOTE This is for coulor displats - On Black and White they can be reverse!
+      const auto BLACK   = Color(0,   0,   0,   0);
+      const auto RED     = Color(255, 0,   0,   0);
+      const auto WHITE   = Color(255, 255, 255, 0);
+
+      //Colors used !! here can you reverse the coulors for Dark mode 
+      const auto base_color = WHITE;
+      const auto base_txt_color = BLACK;
+      const auto alert_base_color = BLACK;
+      const auto alert_txt_color = WHITE;
+
+      //Constants for the metric cells
+      const int cell_width  = 74;
+      const int cell_height = 52;
+      const int txt_offset  = 12;
+
+      const int top = 0;
+      const int top1 = top + cell_height;
+      const int top2 = top1 + cell_height;
+      const int div = 0;
+      const int div1 = div  + cell_width;
+      const int div2 = div1 + cell_width;
+      const int div3 = div2 + cell_width;
+
+      //Function to draw all value cells in the 2 first lines.
+      auto draw_cell = [&](int x, int y,
+                          const char* label,
+                          float val, int decimals,
+                          const std::string& status) {
+
+        esphome::Color text_color = base_txt_color;
+        esphome::Color line_color = base_color;                
+        esphome::Color fill_color = base_color; 
+        if (status == "critical") {
+          text_color = alert_txt_color ;
+          line_color = alert_base_color;                 
+          fill_color = alert_base_color; 
+        } else if (status == "elevated") {
+          line_color = alert_base_color ;
+        }        
+        
+        it.filled_rectangle(x+1, y+1, cell_width, cell_height-1, fill_color);
+        it.rectangle(x+1, y+1, cell_width-1, cell_height-1, line_color);
+        it.rectangle(x+2, y+2, cell_width-3, cell_height-2, line_color);
+        it.printf(x+2, y, id(lable_font), text_color, TextAlign::TOP_LEFT, "%s", label);
+        if (val != val) {    // NaN
+          it.print(x + cell_width-2, y+txt_offset, id(txt_font), text_color, TextAlign::TOP_RIGHT, "--");
+        } else if (decimals > 0) {
+          it.printf(x + cell_width-2, y+txt_offset, id(txt_font), text_color, TextAlign::TOP_RIGHT, "%.1f", val);
+        } else {
+          it.printf(x + cell_width-2, y+txt_offset, id(txt_font), text_color, TextAlign::TOP_RIGHT, "%.0f", val);
+        }
+        if (x > 1) it.line(x,y+2,x,y+cell_height-2, base_txt_color);
+      };
 
       //Top Line PM
-      it.print(0, top, id(lable_font), TextAlign::TOP_LEFT, "PM 1.0");
-      it.printf(div1-2, top+txt_offset, id(txt_font), TextAlign::TOP_RIGHT, "%.1f", id(pm_1_0).state);
-      it.line(div1, top, div1, top1-2);
-
-      it.print(div1+2, top, id(lable_font), TextAlign::TOP_LEFT, "PM 2.5");
-      it.printf(div2-2, top+txt_offset, id(txt_font), TextAlign::TOP_RIGHT, "%.1f", id(pm_2_5).state); 
-      it.line(div2, top, div2, top1-2);
-
-      it.print(div2+2, top, id(lable_font), TextAlign::TOP_LEFT, "PM 4.0");
-      it.printf(div3-2, top+txt_offset, id(txt_font), TextAlign::TOP_RIGHT, "%.1f", id(pm_4_0).state);
-      it.line(div3, top, div3, top1-2);
-
-      it.print(div3+2, top, id(lable_font), TextAlign::TOP_LEFT, "PM 10.0");
-      it.printf(295, top+txt_offset, id(txt_font), TextAlign::TOP_RIGHT, "%.1f", id(pm_10_0).state);
-
+      draw_cell(div,top,"PM1.0", id(pm_1_0).state,1,id(pm1_status).state);
+      draw_cell(div1,top,"PM2.5", id(pm_2_5).state,1,id(pm25_status).state);
+      draw_cell(div2,top,"PM4.0", id(pm_4_0).state,1,id(pm4_status).state);
+      draw_cell(div3,top,"PM10.0", id(pm_10_0).state,1,id(pm10_status).state);
       //Mid line
-      it.line(0,52,296,52);
-      it.print(0, top1 + 2, id(lable_font), TextAlign::TOP_LEFT, "CO2");
-      it.printf(div1-2, top1+txt_offset, id(txt_font), TextAlign::TOP_RIGHT, "%.0f", id(co2).state);
-      it.line(div1, top1+2, div1, top2-2);
-      
-      it.print(div1+2, top1, id(lable_font), TextAlign::TOP_LEFT, "VOC");
-      it.printf(div2-2, top1+txt_offset, id(txt_font), TextAlign::TOP_RIGHT, "%.0f", id(voc).state); 
-      it.line(div2, top1, div2, top2-2);
-
-      it.print(div2+2, top1, id(lable_font), TextAlign::TOP_LEFT, "NOx");
-      it.printf(div3-2, top1+txt_offset, id(txt_font), TextAlign::TOP_RIGHT, "%.0f", id(nox).state);
-      it.line(div3, top1, div3, top2-2);
-
-      it.print(div3+2, top1, id(lable_font), TextAlign::TOP_LEFT, "HCHO");
-      it.printf(295, top1+txt_offset, id(txt_font), TextAlign::TOP_RIGHT, "%.10", 0.0);
+      it.line(div,top1,it.get_width(),top1, base_txt_color);
+      draw_cell(div,top1,"CO2", id(co2).state,0,id(co2_status).state);
+      draw_cell(div1,top1,"VOC", id(voc).state,0,id(voc_status).state);
+      draw_cell(div2,top1,"NOx", id(nox).state,0,id(nox_status).state);
+      draw_cell(div3,top1,"HCHO", 0,1,"good");
 
       //Lower Line
-      it.line(0,top2,296,top2);
-      it.line(175, top2+2, 175, 126);
-      it.printf(180, top2+2, id(lable_font), TextAlign::TOP_LEFT, "%.1f°", id(temp).state);
-      it.printf(220, top2+2, id(lable_font), TextAlign::TOP_LEFT, "%.1f%%", id(humidity).state);
-      it.strftime(260, top2+2, id(lable_font), "%H:%M", id(ha_time).now());
+      it.line(div,top2,it.get_width(),top2, base_txt_color);
+      it.line(175, top2+2, 175, 126, base_txt_color);
+      it.printf(180, top2+2, id(lable_font), base_txt_color, TextAlign::TOP_LEFT, "%.1f°", id(temp).state);
+      it.printf(220, top2+2, id(lable_font), base_txt_color, TextAlign::TOP_LEFT, "%.1f%%", id(humidity).state);
+      it.strftime(260, top2+2, id(lable_font), base_txt_color, "%H:%M", id(ha_time).now());
 
       ESP_LOGD("epaper", "reflash......");
     
