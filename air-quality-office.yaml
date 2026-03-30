@@ -9,6 +9,7 @@ substitutions:
   friendly_name:    "Air Quality Monitor"
   sensor_interval:  "30s"
   display_interval: "60s"
+  dark_mode:        0     ##set to 1 if you want dark mode
 
 # ------------------------------------------------------------
 #  Core
@@ -64,6 +65,24 @@ font:
       weight: 700
     id: txt_font
     size: 40
+
+uart:
+  - id: uart_ze08
+    rx_pin: GPIO17
+    tx_pin: GPIO16
+    baud_rate: 9600
+
+external_components:
+  - source: components
+      #type: local
+      #path: components
+      # this is path to the directory where the "ze08_ch2o" is located within "config/esphome"
+      # Library: https://github.com/haplm/winsen_ze08_ch2o
+    components: [ze08_ch2o]
+
+ze08_ch2o:
+  uart_id: uart_ze08
+  update_interval: 5s
 
 i2c:
   sda: GPIO22
@@ -154,6 +173,14 @@ sensor:
       on_value:
           then:
             - component.update: epaper_display
+    
+  - platform: ze08_ch2o
+    formaldehyde:
+      id: ch2o
+      name: "Formaldehyde sensor"
+      unit_of_measurement: "µg/m³"
+      icon: "mdi:molecule"
+      device_class: "volatile_organic_compounds"
 
   - platform: wifi_signal
     name: "WiFi Signal"
@@ -177,6 +204,7 @@ sensor:
 #  | CO2     | < 800 ppm | 800-1200ppm | > 1200 ppm |
 #  | VOC idx | < 150     | 150-250     | > 250      |
 #  | NOx idx | <  20     | 20-150      | > 150      |
+#  | CH2O    | < 50 ug/m | 50-100ug/m  | > 100 ug/m |
 #  +---------+-----------+-------------+------------+
 # ============================================================
 text_sensor:
@@ -257,6 +285,18 @@ text_sensor:
       else if (id(nox).state < 150.0f)    return {"elevated"};
       else                                return {"critical"};
 
+  - platform: template
+    name: "ch2o Status"
+    id: ch2o_status
+    icon: mdi:smoke
+    update_interval: ${sensor_interval}
+    lambda: |-
+      if (isnan(id(ch2o).state))           return {"unknown"};
+      if (id(ch2o).state < 50.0f)          return {"good"};
+      else if (id(ch2o).state < 100.0f)    return {"elevated"};
+      else                                 return {"critical"};
+
+
   # Worst-case rollup — single entity for HA dashboard + automations
   - platform: template
     name: "Overall Air Quality"
@@ -271,7 +311,8 @@ text_sensor:
         id(pm10_status).state == "critical" ||
         id(co2_status).state  == "critical" ||
         id(voc_status).state  == "critical" ||
-        id(nox_status).state  == "critical";
+        id(nox_status).state  == "critical" ||
+        id(ch2o_status).state == "critical";
       bool elev =
         id(pm1_status).state  == "elevated" ||
         id(pm25_status).state == "elevated" ||
@@ -279,7 +320,8 @@ text_sensor:
         id(pm10_status).state == "elevated" ||
         id(co2_status).state  == "elevated" ||
         id(voc_status).state  == "elevated" ||
-        id(nox_status).state  == "elevated";
+        id(nox_status).state  == "elevated" ||
+        id(ch2o_status).state == "elevated";
       if (crit) return {"critical"};
       if (elev) return {"elevated"};
       return {"good"};
@@ -339,12 +381,19 @@ display:
       const auto RED     = Color(255, 0,   0,   0);
       const auto WHITE   = Color(255, 255, 255, 0);
 
-      //Colors used !! here can you reverse the coulors for Dark mode 
-      const auto base_color = WHITE;
-      const auto base_txt_color = BLACK;
-      const auto alert_base_color = BLACK;
-      const auto alert_txt_color = WHITE;
-
+      //Base colors used 
+      auto base_color = WHITE;
+      auto base_txt_color = BLACK;
+      auto alert_base_color = BLACK;
+      auto alert_txt_color = WHITE;
+      
+      if (${dark_mode} == 1){
+        base_color = BLACK;
+        base_txt_color = WHITE;
+        alert_base_color = WHITE;
+        alert_txt_color = BLACK;
+      }
+      
       //Constants for the metric cells
       const int cell_width  = 74;
       const int cell_height = 52;
@@ -374,7 +423,7 @@ display:
         } else if (status == "elevated") {
           line_color = alert_base_color ;
         }        
-        
+
         it.filled_rectangle(x+1, y+1, cell_width, cell_height-1, fill_color);
         it.rectangle(x+1, y+1, cell_width-1, cell_height-1, line_color);
         it.rectangle(x+2, y+2, cell_width-3, cell_height-2, line_color);
@@ -389,6 +438,9 @@ display:
         if (x > 1) it.line(x,y+2,x,y+cell_height-2, base_txt_color);
       };
 
+      //---------------------------------------Display starts---------------------------------
+      it.fill(base_color);
+
       //Top Line PM
       draw_cell(div,top,"PM1.0", id(pm_1_0).state,1,id(pm1_status).state);
       draw_cell(div1,top,"PM2.5", id(pm_2_5).state,1,id(pm25_status).state);
@@ -399,7 +451,7 @@ display:
       draw_cell(div,top1,"CO2", id(co2).state,0,id(co2_status).state);
       draw_cell(div1,top1,"VOC", id(voc).state,0,id(voc_status).state);
       draw_cell(div2,top1,"NOx", id(nox).state,0,id(nox_status).state);
-      draw_cell(div3,top1,"HCHO", 0,1,"good");
+      draw_cell(div3,top1,"CH2O", id(ch2o).state,0,id(ch2o_status).state);
 
       //Lower Line
       it.line(div,top2,it.get_width(),top2, base_txt_color);
