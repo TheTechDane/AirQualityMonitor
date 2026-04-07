@@ -2,7 +2,7 @@
 #  Air Quality Monitor — ESPHome
 #  Hardware : ESP32 + Sensirion SEN66 + WeAct 2.9" b/w e-paper
 #  HA link  : Native API
-#  Version 2.0 
+#  Version 2.1 — Open-Meteo 12h weather forecast with icons
 # ============================================================
 substitutions:
   device_name:      air-quality-monitor
@@ -59,6 +59,9 @@ font:
   - file: "gfonts://PT Sans Narrow"
     id: lable_font
     size: 15
+  - file: "gfonts://PT Sans Narrow"
+    id: mini_lable_font
+    size: 9
   - file:
       type: gfonts
       family: Smooch Sans
@@ -66,11 +69,34 @@ font:
     id: txt_font
     size: 40
 
+  - file: "https://github.com/Templarian/MaterialDesign-Webfont/raw/master/fonts/materialdesignicons-webfont.ttf"
+    id: mdi_weather
+    size: 24
+    glyphs:
+      - "\U000F0599"   # mdi-weather-sunny
+      - "\U000F0594"   # mdi-weather-night
+      - "\U000F0596"   # mdi-weather-cloudy
+      - "\U000F0595"   # mdi-weather-partly-cloudy
+      - "\U000F0590"   # mdi-weather-rainy
+      - "\U000F0592"   # mdi-weather-pouring
+      - "\U000F0597"   # mdi-weather-snowy
+      - "\U000F067E"   # mdi-weather-fog
+      - "\U000F0593"   # mdi-weather-lightning-rainy
+      - "\U000F0F33"   # mdi-weather-snowy-rainy
+      - "\U000F059D"   # mdi-weather-windy
+      - "\U000F059E"   # mdi-weather-windy-variant
+      - "\U000F0591"   # mdi-weather-hail
+
 uart:
   - id: uart_ze08
     rx_pin: GPIO17
     tx_pin: GPIO16
     baud_rate: 9600
+
+globals:
+  - id: refresh_counter
+    type: int
+    initial_value: '0'
 
 external_components:
   - source: components
@@ -82,7 +108,7 @@ external_components:
 
 ze08_ch2o:
   uart_id: uart_ze08
-  update_interval: 5s
+  update_interval: 20s
 
 i2c:
   sda: GPIO22
@@ -181,10 +207,54 @@ sensor:
       unit_of_measurement: "µg/m³"
       icon: "mdi:molecule"
       device_class: "volatile_organic_compounds"
-
+      on_value:
+        then:
+          - component.update: epaper_display
+      
   - platform: wifi_signal
     name: "WiFi Signal"
     update_interval: 60s
+
+  - platform: homeassistant
+    id: wx_temp
+    entity_id: sensor.weather_12h_temperature
+    internal: true
+    on_value:
+        then:
+          - component.update: epaper_display
+          - logger.log:
+              format: "forcast temp %.1f"
+              args: [ 'x' ]
+
+  - platform: homeassistant
+    id: wx_wind
+    entity_id: sensor.weather_12h_wind_speed
+    internal: true
+    on_value:
+        then:
+          - logger.log:
+              format: "forcast wind %.1f"
+              args: [ 'x' ]
+
+  - platform: homeassistant
+    id: wx_precip
+    entity_id: sensor.weather_12h_precipitation
+    internal: true
+    on_value:
+        then:
+          - logger.log:
+              format: "forcast persp %.1f"
+              args: [ 'x' ] 
+  
+  - platform: homeassistant
+    id: wx_time
+    entity_id: sensor.weather_12h_time_stamp
+    internal: true
+    on_value:
+        then:
+          - logger.log:
+              format: "forcast persp %f"
+              args: [ 'x' ]
 
 # ============================================================
 #  TEXT SENSORS — severity level per metric
@@ -332,6 +402,11 @@ text_sensor:
     ssid:
       name: "Connected SSID"
 
+  - platform: homeassistant
+    id: wx_condition
+    entity_id: sensor.weather_12h_condition
+    internal: true
+
 # ============================================================
 #  BINARY SENSORS
 #  Use as triggers in HA automations.
@@ -364,9 +439,11 @@ spi:
 display:
   ## Currently is the new epaper platform not partial update
   ## 128x296
-  - platform: epaper_spi
+  ##- platform: epaper_spi
+  ##  model:  WeAct-2.9in-3c
+  - platform: waveshare_epaper
+    model: 2.90inv2-r2
     id: epaper_display
-    model:  WeAct-2.9in-3c
     spi_id: bus1
     cs_pin: GPIO01
     dc_pin: GPIO21
@@ -374,12 +451,23 @@ display:
     reset_pin: GPIO0
     rotation: 90
     update_interval: ${display_interval}
-    full_update_every: 3
+    full_update_every: 10
     lambda: |-
-      //Constanst for rendering -- NOTE This is for coulor displats - On Black and White they can be reverse!
-      const auto BLACK   = Color(0,   0,   0,   0);
-      const auto RED     = Color(255, 0,   0,   0);
-      const auto WHITE   = Color(255, 255, 255, 0);
+      // Dirty Reset
+      id(refresh_counter)++;
+      // Every 10th update, we tell the component to "setup" again
+      if (id(refresh_counter) >= 10) {
+        id(refresh_counter) = 0;
+        id(epaper_display).setup(); 
+        ESP_LOGD("epaper", "Hardware reset!");
+      }
+      //Constanst for rendering -- NOTE This is for coulor displays - On Black and White they can be reverse!
+      //const auto BLACK   = Color(0,   0,   0,   0);
+      //const auto RED     = Color(255, 0,   0,   0);
+      //const auto WHITE   = Color(255, 255, 255, 0);
+      //B&W Couloring
+      const auto BLACK   = Color(255, 255, 255, 0);
+      const auto WHITE   = Color(0, 0, 0, 0);
 
       //Base colors used 
       auto base_color = WHITE;
@@ -454,12 +542,48 @@ display:
       draw_cell(div3,top1,"CH2O", id(ch2o).state,0,id(ch2o_status).state);
 
       //Lower Line
-      it.line(div,top2,it.get_width(),top2, base_txt_color);
-      it.line(175, top2+2, 175, 126, base_txt_color);
-      it.printf(180, top2+2, id(lable_font), base_txt_color, TextAlign::TOP_LEFT, "%.1f°", id(temp).state);
-      it.printf(220, top2+2, id(lable_font), base_txt_color, TextAlign::TOP_LEFT, "%.1f%%", id(humidity).state);
-      it.strftime(260, top2+2, id(lable_font), base_txt_color, "%H:%M", id(ha_time).now());
+      it.line(div, top2, it.get_width(), top2, base_txt_color);
+
+      // ── Weather MDI icon ─────────────────────────────────────────────
+      const int ix = 2;
+      const int iy = top2 + 2;
+      const int lower_divider = 187;
+      std::string cond = id(wx_condition).state;
+
+      const char* wx_icon  = "\U000F0596";  // default: cloudy
+      const char* wx_label = "";
+
+      if      (cond == "clear-night")            { wx_icon = "\U000F0594"; wx_label = "Clear";    }
+      else if (cond == "sunny")                  { wx_icon = "\U000F0599"; wx_label = "Sunny";    }
+      else if (cond == "partlycloudy")           { wx_icon = "\U000F0595"; wx_label = "P.Cloudy"; }
+      else if (cond == "cloudy")                 { wx_icon = "\U000F0596"; wx_label = "Cloudy";   }
+      else if (cond == "fog")                    { wx_icon = "\U000F067E"; wx_label = "Foggy";    }
+      else if (cond == "rainy")                  { wx_icon = "\U000F0590"; wx_label = "Rainy";    }
+      else if (cond == "pouring")                { wx_icon = "\U000F0592"; wx_label = "Pouring";  }
+      else if (cond == "snowy")                  { wx_icon = "\U000F0597"; wx_label = "Snowy";    }
+      else if (cond == "snowy-rainy")            { wx_icon = "\U000F0F33"; wx_label = "Sleet";    }
+      else if (cond == "lightning")              { wx_icon = "\U000F0593"; wx_label = "Thunder";  }
+      else if (cond == "lightning-rainy")        { wx_icon = "\U000F0593"; wx_label = "Storm";    }
+      else if (cond == "windy")                  { wx_icon = "\U000F059D"; wx_label = "Windy";    }
+      else if (cond == "windy-variant")          { wx_icon = "\U000F059E"; wx_label = "Windy";    }
+      else if (cond == "hail")                   { wx_icon = "\U000F0591"; wx_label = "Hail";     }
+
+      // ── Weather label + values (right of icon) ───────────────────────
+      it.print(ix, iy, id(mdi_weather), base_txt_color, wx_icon);
+      const int wx = ix + 24;
+      const int wy =  iy+4;
+      it.printf(wx, wy,  id(lable_font), base_txt_color, TextAlign::TOP_LEFT, "%*s", -9, wx_label);
+      if (id(wx_temp).has_state()) {
+        it.strftime(lower_divider/2, top2-1, id(mini_lable_font), base_txt_color, TextAlign::TOP_CENTER, "Forcast %H:%M", ESPTime::from_epoch_local(id(wx_time).state));
+        it.printf(lower_divider - 2, wy, id(lable_font), base_txt_color, TextAlign::TOP_RIGHT,"%.0f°   %.1fm/s   %.1fmm", id(wx_temp).state, id(wx_wind).state, id(wx_precip).state);
+      } else {
+        it.print(wx, iy, id(lable_font), base_txt_color, TextAlign::TOP_LEFT, "fetching...");
+      }
+
+      // ── Divider + existing temp / humidity / time ────────────────────
+      it.line(lower_divider, iy, lower_divider, 126, base_txt_color);
+      it.printf(lower_divider + 2, iy,  id(lable_font), base_txt_color, TextAlign::TOP_LEFT, "%.1f°",  id(temp).state);
+      it.printf(221, iy,  id(lable_font), base_txt_color, TextAlign::TOP_LEFT, "%.1f%%", id(humidity).state);
+      it.strftime(260, iy, id(lable_font), base_txt_color, "%H:%M", id(ha_time).now());
 
       ESP_LOGD("epaper", "reflash......");
-    
-    

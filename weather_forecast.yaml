@@ -1,0 +1,45 @@
+template:
+  - trigger:
+      - platform: time_pattern
+        hours: "/1"
+      - trigger: homeassistant
+        event: start
+    action:
+      - service: weather.get_forecasts
+        target:
+          entity_id: weather.forecast_home
+        data:
+          type: hourly
+        response_variable: forecast_data
+
+    ## The sensors was meant to return a Twice dayly -- next 12 hurs forcase for now it is the forcast in 3-4 hours.
+    sensor:
+      - name: "Weather 12h Temperature"
+        unique_id: weather_12h_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[5].temperature }}
+
+      - name: "Weather 12h Wind Speed"
+        unique_id: weather_12h_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[5].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather 12h Condition"
+        unique_id: weather_12h_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[5].condition }}
+
+      - name: "Weather 12h Precipitation"
+        unique_id: weather_12h_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[5].precipitation }}
+
+      - name: "Weather 12h Time-stamp"
+        unique_id: weather_12h_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[5].datetime) }}
+        ##{{ forecast_data['weather.forecast_home'].forecast[5].datetime }}
+        ##{# 'as_timestamp' converts the date string into a raw number of seconds #}
