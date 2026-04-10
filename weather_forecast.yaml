@@ -41,5 +41,4 @@ template:
         unique_id: weather_12h_timestamp
         state: >
           {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[5].datetime) }}
-        ##{{ forecast_data['weather.forecast_home'].forecast[5].datetime }}
-        ##{# 'as_timestamp' converts the date string into a raw number of seconds #}
+
