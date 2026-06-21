@@ -91,14 +91,14 @@ More or less all wires is a one to one connection except Ground and 3.3v. Connec
 | GPIO00 | D0       | RST          | SPI       | e-Paper RST      |
 | GPIO01 | D1       | CS           | SPI       | e-Paper CS       |
 | GPIO02 | D2       | BUSY (input) | SPI       | e-Paper BUSY     |
-| GPIO16 | D6       | UART TX      | UART      | ZE08 RX (pin 4)  |
-| GPIO17 | D7       | UART RX      | UART      | ZE08 TX (pin 3)  |
+| GPIO16 | D6       | UART TX      | UART      | ZE08 RX (pin 5)  |
+| GPIO17 | D7       | UART RX      | UART      | ZE08 TX (pin 6)  |
 | GPIO18 | D10      | SPI MOSI     | SPI       | e-Paper DIN      |
 | GPIO19 | D8       | SPI CLK      | SPI       | e-Paper SCLK     |
 | GPIO20 | D9       | SPI MISO     | SPI       | —  (unused)      |
 | GPIO21 | D3       | DC           | SPI       | e-Paper DC       |
-| GPIO22 | D4       | I²C SDA      | I²C       | SEN66 pin 2      |
-| GPIO23 | D5       | I²C SCL      | I²C       | SEN66 pin 3      |
+| GPIO22 | D4       | I²C SDA      | I²C       | SEN66 pin 3      |
+| GPIO23 | D5       | I²C SCL      | I²C       | SEN66 pin 4      |
 
 ## Power Summary
 
