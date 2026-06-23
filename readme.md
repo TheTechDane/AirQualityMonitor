@@ -46,8 +46,8 @@ After that you just need to provision ESP32 Device and use this YAML file: [link
 3D Model: [Bambulab](https://makerworld.com/en/models/2572064-air-quality-monitor#profileId-2835572)
 
 You need:
-- 4 Heat inserts - 3x3x4.5mm
-- 4 3x5mm bolts (I only had 6mm length so I put a nut on top to make sure you do not do a dent in the front - ask me how I know :-
+- 4 Heat inserts - M3x3x4.5mm
+- 4 M3x5mm bolts (I only had 6mm length so I put a nut on top to make sure you do not do a dent in the front - ask me how I know :-
 ))    
 ![alt text](images/dent.png)
 - 4 or 8 Magnets 6x1.6mm
