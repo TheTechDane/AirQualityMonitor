@@ -9,8 +9,8 @@
 
 | Signal | XIAO Pin | GPIO   | SEN66 Pin | Notes                        |
 |--------|----------|--------|-----------|------------------------------|
-| SDA    | D4       | GPIO22 | Pin 2     | Pull-up enabled · 100 kHz    |
-| SCL    | D5       | GPIO23 | Pin 3     | Pull-up enabled · 100 kHz    |
+| SDA    | D4       | GPIO22 | Pin 3     | Pull-up enabled · 100 kHz    |
+| SCL    | D5       | GPIO23 | Pin 4     | Pull-up enabled · 100 kHz    |
 | VDD    | 3V3      | —      | Pin 1     | 3.3 V · max 75 mA            |
 | GND    | GND      | —      | Pin 4     |                              |
 
@@ -22,8 +22,8 @@
 
 | Signal      | XIAO Pin | GPIO   | ZE08 Pin | Notes                              |
 |-------------|----------|--------|----------|------------------------------------|
-| RX ← TX     | D7       | GPIO17 | Pin 3    | ESP32 RX ← ZE08 TX (cross-wired)  |
-| TX → RX     | D6       | GPIO16 | Pin 4    | ESP32 TX → ZE08 RX (cross-wired)  |
+| RX ← TX     | D7       | GPIO17 | Pin 6    | ESP32 RX ← ZE08 TX (cross-wired)  |
+| TX → RX     | D6       | GPIO16 | Pin 5    | ESP32 TX → ZE08 RX (cross-wired)  |
 | VCC         | 5V       | —      | Pin 1    | 5 V required · use VBUS pin        |
 | GND         | GND      | —      | Pin 2    |                                    |
 
@@ -70,11 +70,11 @@
 | GPIO00 | D0       | RST          | SPI       | e-Paper RST      |
 | GPIO01 | D1       | CS           | SPI       | e-Paper CS       |
 | GPIO02 | D2       | BUSY (input) | SPI       | e-Paper BUSY     |
-| GPIO16 | D6       | UART TX      | UART      | ZE08 RX (pin 4)  |
-| GPIO17 | D7       | UART RX      | UART      | ZE08 TX (pin 3)  |
+| GPIO16 | D6       | UART TX      | UART      | ZE08 RX (pin 5)  |
+| GPIO17 | D7       | UART RX      | UART      | ZE08 TX (pin 6)  |
 | GPIO18 | D10      | SPI MOSI     | SPI       | e-Paper DIN      |
 | GPIO19 | D8       | SPI CLK      | SPI       | e-Paper SCLK     |
 | GPIO20 | D9       | SPI MISO     | SPI       | —  (unused)      |
 | GPIO21 | D3       | DC           | SPI       | e-Paper DC       |
-| GPIO22 | D4       | I²C SDA      | I²C       | SEN66 pin 2      |
-| GPIO23 | D5       | I²C SCL      | I²C       | SEN66 pin 3      |
+| GPIO22 | D4       | I²C SDA      | I²C       | SEN66 pin 3      |
+| GPIO23 | D5       | I²C SCL      | I²C       | SEN66 pin 4      |
