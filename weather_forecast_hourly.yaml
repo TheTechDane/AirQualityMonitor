@@ -1,0 +1,1710 @@
+# weather_forecast_hourly.yaml
+# Generic hourly forecast — all 48 slots as HA sensors.
+# Sensor naming: sensor.weather_fc_NN_<field>  (NN = 00 to 47)
+#
+# Fields per slot:
+#   sensor.weather_fc_NN_condition     e.g. 'partlycloudy'
+#   sensor.weather_fc_NN_temperature   °C
+#   sensor.weather_fc_NN_wind_speed    m/s (converted from km/h)
+#   sensor.weather_fc_NN_precipitation mm
+#   sensor.weather_fc_NN_precip_prob   %
+#   sensor.weather_fc_NN_timestamp     unix timestamp
+#
+# Reuse examples:
+#   Air monitor : slots 05
+#   Clock 24h   : slots 00, 04, 08, 12, 16, 20, 24
+
+template:
+  - trigger:
+      - platform: time_pattern
+        hours: "/1"
+      - trigger: homeassistant
+        event: start
+    action:
+      - service: weather.get_forecasts
+        target:
+          entity_id: weather.forecast_home
+        data:
+          type: hourly
+        response_variable: forecast_data
+
+    sensor:
+      # ── Slot 00 ──────────────────────────────────────────
+      - name: "Weather FC 00 Condition"
+        unique_id: weather_fc_00_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[0].condition }}
+
+      - name: "Weather FC 00 Temperature"
+        unique_id: weather_fc_00_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[0].temperature | round(1) }}
+
+      - name: "Weather FC 00 Wind Speed"
+        unique_id: weather_fc_00_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[0].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 00 Precipitation"
+        unique_id: weather_fc_00_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[0].precipitation }}
+
+      - name: "Weather FC 00 Precip Prob"
+        unique_id: weather_fc_00_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[0].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 00 Timestamp"
+        unique_id: weather_fc_00_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[0].datetime) }}
+
+      # ── Slot 01 ──────────────────────────────────────────
+      - name: "Weather FC 01 Condition"
+        unique_id: weather_fc_01_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[1].condition }}
+
+      - name: "Weather FC 01 Temperature"
+        unique_id: weather_fc_01_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[1].temperature | round(1) }}
+
+      - name: "Weather FC 01 Wind Speed"
+        unique_id: weather_fc_01_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[1].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 01 Precipitation"
+        unique_id: weather_fc_01_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[1].precipitation }}
+
+      - name: "Weather FC 01 Precip Prob"
+        unique_id: weather_fc_01_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[1].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 01 Timestamp"
+        unique_id: weather_fc_01_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[1].datetime) }}
+
+      # ── Slot 02 ──────────────────────────────────────────
+      - name: "Weather FC 02 Condition"
+        unique_id: weather_fc_02_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[2].condition }}
+
+      - name: "Weather FC 02 Temperature"
+        unique_id: weather_fc_02_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[2].temperature | round(1) }}
+
+      - name: "Weather FC 02 Wind Speed"
+        unique_id: weather_fc_02_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[2].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 02 Precipitation"
+        unique_id: weather_fc_02_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[2].precipitation }}
+
+      - name: "Weather FC 02 Precip Prob"
+        unique_id: weather_fc_02_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[2].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 02 Timestamp"
+        unique_id: weather_fc_02_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[2].datetime) }}
+
+      # ── Slot 03 ──────────────────────────────────────────
+      - name: "Weather FC 03 Condition"
+        unique_id: weather_fc_03_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[3].condition }}
+
+      - name: "Weather FC 03 Temperature"
+        unique_id: weather_fc_03_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[3].temperature | round(1) }}
+
+      - name: "Weather FC 03 Wind Speed"
+        unique_id: weather_fc_03_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[3].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 03 Precipitation"
+        unique_id: weather_fc_03_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[3].precipitation }}
+
+      - name: "Weather FC 03 Precip Prob"
+        unique_id: weather_fc_03_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[3].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 03 Timestamp"
+        unique_id: weather_fc_03_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[3].datetime) }}
+
+      # ── Slot 04 ──────────────────────────────────────────
+      - name: "Weather FC 04 Condition"
+        unique_id: weather_fc_04_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[4].condition }}
+
+      - name: "Weather FC 04 Temperature"
+        unique_id: weather_fc_04_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[4].temperature | round(1) }}
+
+      - name: "Weather FC 04 Wind Speed"
+        unique_id: weather_fc_04_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[4].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 04 Precipitation"
+        unique_id: weather_fc_04_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[4].precipitation }}
+
+      - name: "Weather FC 04 Precip Prob"
+        unique_id: weather_fc_04_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[4].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 04 Timestamp"
+        unique_id: weather_fc_04_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[4].datetime) }}
+
+      # ── Slot 05 ──────────────────────────────────────────
+      - name: "Weather FC 05 Condition"
+        unique_id: weather_fc_05_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[5].condition }}
+
+      - name: "Weather FC 05 Temperature"
+        unique_id: weather_fc_05_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[5].temperature | round(1) }}
+
+      - name: "Weather FC 05 Wind Speed"
+        unique_id: weather_fc_05_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[5].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 05 Precipitation"
+        unique_id: weather_fc_05_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[5].precipitation }}
+
+      - name: "Weather FC 05 Precip Prob"
+        unique_id: weather_fc_05_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[5].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 05 Timestamp"
+        unique_id: weather_fc_05_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[5].datetime) }}
+
+      # ── Slot 06 ──────────────────────────────────────────
+      - name: "Weather FC 06 Condition"
+        unique_id: weather_fc_06_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[6].condition }}
+
+      - name: "Weather FC 06 Temperature"
+        unique_id: weather_fc_06_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[6].temperature | round(1) }}
+
+      - name: "Weather FC 06 Wind Speed"
+        unique_id: weather_fc_06_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[6].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 06 Precipitation"
+        unique_id: weather_fc_06_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[6].precipitation }}
+
+      - name: "Weather FC 06 Precip Prob"
+        unique_id: weather_fc_06_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[6].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 06 Timestamp"
+        unique_id: weather_fc_06_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[6].datetime) }}
+
+      # ── Slot 07 ──────────────────────────────────────────
+      - name: "Weather FC 07 Condition"
+        unique_id: weather_fc_07_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[7].condition }}
+
+      - name: "Weather FC 07 Temperature"
+        unique_id: weather_fc_07_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[7].temperature | round(1) }}
+
+      - name: "Weather FC 07 Wind Speed"
+        unique_id: weather_fc_07_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[7].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 07 Precipitation"
+        unique_id: weather_fc_07_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[7].precipitation }}
+
+      - name: "Weather FC 07 Precip Prob"
+        unique_id: weather_fc_07_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[7].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 07 Timestamp"
+        unique_id: weather_fc_07_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[7].datetime) }}
+
+      # ── Slot 08 ──────────────────────────────────────────
+      - name: "Weather FC 08 Condition"
+        unique_id: weather_fc_08_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[8].condition }}
+
+      - name: "Weather FC 08 Temperature"
+        unique_id: weather_fc_08_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[8].temperature | round(1) }}
+
+      - name: "Weather FC 08 Wind Speed"
+        unique_id: weather_fc_08_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[8].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 08 Precipitation"
+        unique_id: weather_fc_08_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[8].precipitation }}
+
+      - name: "Weather FC 08 Precip Prob"
+        unique_id: weather_fc_08_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[8].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 08 Timestamp"
+        unique_id: weather_fc_08_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[8].datetime) }}
+
+      # ── Slot 09 ──────────────────────────────────────────
+      - name: "Weather FC 09 Condition"
+        unique_id: weather_fc_09_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[9].condition }}
+
+      - name: "Weather FC 09 Temperature"
+        unique_id: weather_fc_09_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[9].temperature | round(1) }}
+
+      - name: "Weather FC 09 Wind Speed"
+        unique_id: weather_fc_09_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[9].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 09 Precipitation"
+        unique_id: weather_fc_09_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[9].precipitation }}
+
+      - name: "Weather FC 09 Precip Prob"
+        unique_id: weather_fc_09_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[9].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 09 Timestamp"
+        unique_id: weather_fc_09_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[9].datetime) }}
+
+      # ── Slot 10 ──────────────────────────────────────────
+      - name: "Weather FC 10 Condition"
+        unique_id: weather_fc_10_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[10].condition }}
+
+      - name: "Weather FC 10 Temperature"
+        unique_id: weather_fc_10_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[10].temperature | round(1) }}
+
+      - name: "Weather FC 10 Wind Speed"
+        unique_id: weather_fc_10_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[10].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 10 Precipitation"
+        unique_id: weather_fc_10_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[10].precipitation }}
+
+      - name: "Weather FC 10 Precip Prob"
+        unique_id: weather_fc_10_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[10].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 10 Timestamp"
+        unique_id: weather_fc_10_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[10].datetime) }}
+
+      # ── Slot 11 ──────────────────────────────────────────
+      - name: "Weather FC 11 Condition"
+        unique_id: weather_fc_11_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[11].condition }}
+
+      - name: "Weather FC 11 Temperature"
+        unique_id: weather_fc_11_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[11].temperature | round(1) }}
+
+      - name: "Weather FC 11 Wind Speed"
+        unique_id: weather_fc_11_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[11].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 11 Precipitation"
+        unique_id: weather_fc_11_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[11].precipitation }}
+
+      - name: "Weather FC 11 Precip Prob"
+        unique_id: weather_fc_11_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[11].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 11 Timestamp"
+        unique_id: weather_fc_11_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[11].datetime) }}
+
+      # ── Slot 12 ──────────────────────────────────────────
+      - name: "Weather FC 12 Condition"
+        unique_id: weather_fc_12_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[12].condition }}
+
+      - name: "Weather FC 12 Temperature"
+        unique_id: weather_fc_12_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[12].temperature | round(1) }}
+
+      - name: "Weather FC 12 Wind Speed"
+        unique_id: weather_fc_12_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[12].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 12 Precipitation"
+        unique_id: weather_fc_12_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[12].precipitation }}
+
+      - name: "Weather FC 12 Precip Prob"
+        unique_id: weather_fc_12_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[12].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 12 Timestamp"
+        unique_id: weather_fc_12_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[12].datetime) }}
+
+      # ── Slot 13 ──────────────────────────────────────────
+      - name: "Weather FC 13 Condition"
+        unique_id: weather_fc_13_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[13].condition }}
+
+      - name: "Weather FC 13 Temperature"
+        unique_id: weather_fc_13_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[13].temperature | round(1) }}
+
+      - name: "Weather FC 13 Wind Speed"
+        unique_id: weather_fc_13_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[13].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 13 Precipitation"
+        unique_id: weather_fc_13_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[13].precipitation }}
+
+      - name: "Weather FC 13 Precip Prob"
+        unique_id: weather_fc_13_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[13].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 13 Timestamp"
+        unique_id: weather_fc_13_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[13].datetime) }}
+
+      # ── Slot 14 ──────────────────────────────────────────
+      - name: "Weather FC 14 Condition"
+        unique_id: weather_fc_14_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[14].condition }}
+
+      - name: "Weather FC 14 Temperature"
+        unique_id: weather_fc_14_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[14].temperature | round(1) }}
+
+      - name: "Weather FC 14 Wind Speed"
+        unique_id: weather_fc_14_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[14].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 14 Precipitation"
+        unique_id: weather_fc_14_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[14].precipitation }}
+
+      - name: "Weather FC 14 Precip Prob"
+        unique_id: weather_fc_14_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[14].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 14 Timestamp"
+        unique_id: weather_fc_14_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[14].datetime) }}
+
+      # ── Slot 15 ──────────────────────────────────────────
+      - name: "Weather FC 15 Condition"
+        unique_id: weather_fc_15_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[15].condition }}
+
+      - name: "Weather FC 15 Temperature"
+        unique_id: weather_fc_15_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[15].temperature | round(1) }}
+
+      - name: "Weather FC 15 Wind Speed"
+        unique_id: weather_fc_15_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[15].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 15 Precipitation"
+        unique_id: weather_fc_15_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[15].precipitation }}
+
+      - name: "Weather FC 15 Precip Prob"
+        unique_id: weather_fc_15_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[15].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 15 Timestamp"
+        unique_id: weather_fc_15_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[15].datetime) }}
+
+      # ── Slot 16 ──────────────────────────────────────────
+      - name: "Weather FC 16 Condition"
+        unique_id: weather_fc_16_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[16].condition }}
+
+      - name: "Weather FC 16 Temperature"
+        unique_id: weather_fc_16_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[16].temperature | round(1) }}
+
+      - name: "Weather FC 16 Wind Speed"
+        unique_id: weather_fc_16_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[16].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 16 Precipitation"
+        unique_id: weather_fc_16_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[16].precipitation }}
+
+      - name: "Weather FC 16 Precip Prob"
+        unique_id: weather_fc_16_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[16].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 16 Timestamp"
+        unique_id: weather_fc_16_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[16].datetime) }}
+
+      # ── Slot 17 ──────────────────────────────────────────
+      - name: "Weather FC 17 Condition"
+        unique_id: weather_fc_17_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[17].condition }}
+
+      - name: "Weather FC 17 Temperature"
+        unique_id: weather_fc_17_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[17].temperature | round(1) }}
+
+      - name: "Weather FC 17 Wind Speed"
+        unique_id: weather_fc_17_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[17].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 17 Precipitation"
+        unique_id: weather_fc_17_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[17].precipitation }}
+
+      - name: "Weather FC 17 Precip Prob"
+        unique_id: weather_fc_17_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[17].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 17 Timestamp"
+        unique_id: weather_fc_17_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[17].datetime) }}
+
+      # ── Slot 18 ──────────────────────────────────────────
+      - name: "Weather FC 18 Condition"
+        unique_id: weather_fc_18_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[18].condition }}
+
+      - name: "Weather FC 18 Temperature"
+        unique_id: weather_fc_18_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[18].temperature | round(1) }}
+
+      - name: "Weather FC 18 Wind Speed"
+        unique_id: weather_fc_18_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[18].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 18 Precipitation"
+        unique_id: weather_fc_18_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[18].precipitation }}
+
+      - name: "Weather FC 18 Precip Prob"
+        unique_id: weather_fc_18_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[18].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 18 Timestamp"
+        unique_id: weather_fc_18_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[18].datetime) }}
+
+      # ── Slot 19 ──────────────────────────────────────────
+      - name: "Weather FC 19 Condition"
+        unique_id: weather_fc_19_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[19].condition }}
+
+      - name: "Weather FC 19 Temperature"
+        unique_id: weather_fc_19_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[19].temperature | round(1) }}
+
+      - name: "Weather FC 19 Wind Speed"
+        unique_id: weather_fc_19_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[19].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 19 Precipitation"
+        unique_id: weather_fc_19_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[19].precipitation }}
+
+      - name: "Weather FC 19 Precip Prob"
+        unique_id: weather_fc_19_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[19].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 19 Timestamp"
+        unique_id: weather_fc_19_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[19].datetime) }}
+
+      # ── Slot 20 ──────────────────────────────────────────
+      - name: "Weather FC 20 Condition"
+        unique_id: weather_fc_20_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[20].condition }}
+
+      - name: "Weather FC 20 Temperature"
+        unique_id: weather_fc_20_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[20].temperature | round(1) }}
+
+      - name: "Weather FC 20 Wind Speed"
+        unique_id: weather_fc_20_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[20].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 20 Precipitation"
+        unique_id: weather_fc_20_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[20].precipitation }}
+
+      - name: "Weather FC 20 Precip Prob"
+        unique_id: weather_fc_20_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[20].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 20 Timestamp"
+        unique_id: weather_fc_20_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[20].datetime) }}
+
+      # ── Slot 21 ──────────────────────────────────────────
+      - name: "Weather FC 21 Condition"
+        unique_id: weather_fc_21_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[21].condition }}
+
+      - name: "Weather FC 21 Temperature"
+        unique_id: weather_fc_21_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[21].temperature | round(1) }}
+
+      - name: "Weather FC 21 Wind Speed"
+        unique_id: weather_fc_21_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[21].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 21 Precipitation"
+        unique_id: weather_fc_21_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[21].precipitation }}
+
+      - name: "Weather FC 21 Precip Prob"
+        unique_id: weather_fc_21_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[21].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 21 Timestamp"
+        unique_id: weather_fc_21_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[21].datetime) }}
+
+      # ── Slot 22 ──────────────────────────────────────────
+      - name: "Weather FC 22 Condition"
+        unique_id: weather_fc_22_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[22].condition }}
+
+      - name: "Weather FC 22 Temperature"
+        unique_id: weather_fc_22_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[22].temperature | round(1) }}
+
+      - name: "Weather FC 22 Wind Speed"
+        unique_id: weather_fc_22_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[22].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 22 Precipitation"
+        unique_id: weather_fc_22_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[22].precipitation }}
+
+      - name: "Weather FC 22 Precip Prob"
+        unique_id: weather_fc_22_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[22].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 22 Timestamp"
+        unique_id: weather_fc_22_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[22].datetime) }}
+
+      # ── Slot 23 ──────────────────────────────────────────
+      - name: "Weather FC 23 Condition"
+        unique_id: weather_fc_23_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[23].condition }}
+
+      - name: "Weather FC 23 Temperature"
+        unique_id: weather_fc_23_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[23].temperature | round(1) }}
+
+      - name: "Weather FC 23 Wind Speed"
+        unique_id: weather_fc_23_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[23].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 23 Precipitation"
+        unique_id: weather_fc_23_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[23].precipitation }}
+
+      - name: "Weather FC 23 Precip Prob"
+        unique_id: weather_fc_23_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[23].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 23 Timestamp"
+        unique_id: weather_fc_23_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[23].datetime) }}
+
+      # ── Slot 24 ──────────────────────────────────────────
+      - name: "Weather FC 24 Condition"
+        unique_id: weather_fc_24_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[24].condition }}
+
+      - name: "Weather FC 24 Temperature"
+        unique_id: weather_fc_24_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[24].temperature | round(1) }}
+
+      - name: "Weather FC 24 Wind Speed"
+        unique_id: weather_fc_24_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[24].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 24 Precipitation"
+        unique_id: weather_fc_24_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[24].precipitation }}
+
+      - name: "Weather FC 24 Precip Prob"
+        unique_id: weather_fc_24_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[24].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 24 Timestamp"
+        unique_id: weather_fc_24_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[24].datetime) }}
+
+      # ── Slot 25 ──────────────────────────────────────────
+      - name: "Weather FC 25 Condition"
+        unique_id: weather_fc_25_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[25].condition }}
+
+      - name: "Weather FC 25 Temperature"
+        unique_id: weather_fc_25_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[25].temperature | round(1) }}
+
+      - name: "Weather FC 25 Wind Speed"
+        unique_id: weather_fc_25_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[25].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 25 Precipitation"
+        unique_id: weather_fc_25_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[25].precipitation }}
+
+      - name: "Weather FC 25 Precip Prob"
+        unique_id: weather_fc_25_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[25].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 25 Timestamp"
+        unique_id: weather_fc_25_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[25].datetime) }}
+
+      # ── Slot 26 ──────────────────────────────────────────
+      - name: "Weather FC 26 Condition"
+        unique_id: weather_fc_26_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[26].condition }}
+
+      - name: "Weather FC 26 Temperature"
+        unique_id: weather_fc_26_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[26].temperature | round(1) }}
+
+      - name: "Weather FC 26 Wind Speed"
+        unique_id: weather_fc_26_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[26].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 26 Precipitation"
+        unique_id: weather_fc_26_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[26].precipitation }}
+
+      - name: "Weather FC 26 Precip Prob"
+        unique_id: weather_fc_26_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[26].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 26 Timestamp"
+        unique_id: weather_fc_26_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[26].datetime) }}
+
+      # ── Slot 27 ──────────────────────────────────────────
+      - name: "Weather FC 27 Condition"
+        unique_id: weather_fc_27_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[27].condition }}
+
+      - name: "Weather FC 27 Temperature"
+        unique_id: weather_fc_27_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[27].temperature | round(1) }}
+
+      - name: "Weather FC 27 Wind Speed"
+        unique_id: weather_fc_27_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[27].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 27 Precipitation"
+        unique_id: weather_fc_27_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[27].precipitation }}
+
+      - name: "Weather FC 27 Precip Prob"
+        unique_id: weather_fc_27_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[27].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 27 Timestamp"
+        unique_id: weather_fc_27_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[27].datetime) }}
+
+      # ── Slot 28 ──────────────────────────────────────────
+      - name: "Weather FC 28 Condition"
+        unique_id: weather_fc_28_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[28].condition }}
+
+      - name: "Weather FC 28 Temperature"
+        unique_id: weather_fc_28_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[28].temperature | round(1) }}
+
+      - name: "Weather FC 28 Wind Speed"
+        unique_id: weather_fc_28_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[28].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 28 Precipitation"
+        unique_id: weather_fc_28_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[28].precipitation }}
+
+      - name: "Weather FC 28 Precip Prob"
+        unique_id: weather_fc_28_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[28].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 28 Timestamp"
+        unique_id: weather_fc_28_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[28].datetime) }}
+
+      # ── Slot 29 ──────────────────────────────────────────
+      - name: "Weather FC 29 Condition"
+        unique_id: weather_fc_29_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[29].condition }}
+
+      - name: "Weather FC 29 Temperature"
+        unique_id: weather_fc_29_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[29].temperature | round(1) }}
+
+      - name: "Weather FC 29 Wind Speed"
+        unique_id: weather_fc_29_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[29].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 29 Precipitation"
+        unique_id: weather_fc_29_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[29].precipitation }}
+
+      - name: "Weather FC 29 Precip Prob"
+        unique_id: weather_fc_29_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[29].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 29 Timestamp"
+        unique_id: weather_fc_29_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[29].datetime) }}
+
+      # ── Slot 30 ──────────────────────────────────────────
+      - name: "Weather FC 30 Condition"
+        unique_id: weather_fc_30_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[30].condition }}
+
+      - name: "Weather FC 30 Temperature"
+        unique_id: weather_fc_30_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[30].temperature | round(1) }}
+
+      - name: "Weather FC 30 Wind Speed"
+        unique_id: weather_fc_30_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[30].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 30 Precipitation"
+        unique_id: weather_fc_30_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[30].precipitation }}
+
+      - name: "Weather FC 30 Precip Prob"
+        unique_id: weather_fc_30_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[30].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 30 Timestamp"
+        unique_id: weather_fc_30_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[30].datetime) }}
+
+      # ── Slot 31 ──────────────────────────────────────────
+      - name: "Weather FC 31 Condition"
+        unique_id: weather_fc_31_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[31].condition }}
+
+      - name: "Weather FC 31 Temperature"
+        unique_id: weather_fc_31_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[31].temperature | round(1) }}
+
+      - name: "Weather FC 31 Wind Speed"
+        unique_id: weather_fc_31_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[31].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 31 Precipitation"
+        unique_id: weather_fc_31_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[31].precipitation }}
+
+      - name: "Weather FC 31 Precip Prob"
+        unique_id: weather_fc_31_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[31].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 31 Timestamp"
+        unique_id: weather_fc_31_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[31].datetime) }}
+
+      # ── Slot 32 ──────────────────────────────────────────
+      - name: "Weather FC 32 Condition"
+        unique_id: weather_fc_32_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[32].condition }}
+
+      - name: "Weather FC 32 Temperature"
+        unique_id: weather_fc_32_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[32].temperature | round(1) }}
+
+      - name: "Weather FC 32 Wind Speed"
+        unique_id: weather_fc_32_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[32].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 32 Precipitation"
+        unique_id: weather_fc_32_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[32].precipitation }}
+
+      - name: "Weather FC 32 Precip Prob"
+        unique_id: weather_fc_32_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[32].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 32 Timestamp"
+        unique_id: weather_fc_32_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[32].datetime) }}
+
+      # ── Slot 33 ──────────────────────────────────────────
+      - name: "Weather FC 33 Condition"
+        unique_id: weather_fc_33_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[33].condition }}
+
+      - name: "Weather FC 33 Temperature"
+        unique_id: weather_fc_33_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[33].temperature | round(1) }}
+
+      - name: "Weather FC 33 Wind Speed"
+        unique_id: weather_fc_33_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[33].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 33 Precipitation"
+        unique_id: weather_fc_33_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[33].precipitation }}
+
+      - name: "Weather FC 33 Precip Prob"
+        unique_id: weather_fc_33_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[33].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 33 Timestamp"
+        unique_id: weather_fc_33_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[33].datetime) }}
+
+      # ── Slot 34 ──────────────────────────────────────────
+      - name: "Weather FC 34 Condition"
+        unique_id: weather_fc_34_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[34].condition }}
+
+      - name: "Weather FC 34 Temperature"
+        unique_id: weather_fc_34_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[34].temperature | round(1) }}
+
+      - name: "Weather FC 34 Wind Speed"
+        unique_id: weather_fc_34_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[34].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 34 Precipitation"
+        unique_id: weather_fc_34_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[34].precipitation }}
+
+      - name: "Weather FC 34 Precip Prob"
+        unique_id: weather_fc_34_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[34].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 34 Timestamp"
+        unique_id: weather_fc_34_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[34].datetime) }}
+
+      # ── Slot 35 ──────────────────────────────────────────
+      - name: "Weather FC 35 Condition"
+        unique_id: weather_fc_35_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[35].condition }}
+
+      - name: "Weather FC 35 Temperature"
+        unique_id: weather_fc_35_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[35].temperature | round(1) }}
+
+      - name: "Weather FC 35 Wind Speed"
+        unique_id: weather_fc_35_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[35].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 35 Precipitation"
+        unique_id: weather_fc_35_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[35].precipitation }}
+
+      - name: "Weather FC 35 Precip Prob"
+        unique_id: weather_fc_35_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[35].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 35 Timestamp"
+        unique_id: weather_fc_35_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[35].datetime) }}
+
+      # ── Slot 36 ──────────────────────────────────────────
+      - name: "Weather FC 36 Condition"
+        unique_id: weather_fc_36_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[36].condition }}
+
+      - name: "Weather FC 36 Temperature"
+        unique_id: weather_fc_36_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[36].temperature | round(1) }}
+
+      - name: "Weather FC 36 Wind Speed"
+        unique_id: weather_fc_36_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[36].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 36 Precipitation"
+        unique_id: weather_fc_36_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[36].precipitation }}
+
+      - name: "Weather FC 36 Precip Prob"
+        unique_id: weather_fc_36_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[36].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 36 Timestamp"
+        unique_id: weather_fc_36_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[36].datetime) }}
+
+      # ── Slot 37 ──────────────────────────────────────────
+      - name: "Weather FC 37 Condition"
+        unique_id: weather_fc_37_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[37].condition }}
+
+      - name: "Weather FC 37 Temperature"
+        unique_id: weather_fc_37_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[37].temperature | round(1) }}
+
+      - name: "Weather FC 37 Wind Speed"
+        unique_id: weather_fc_37_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[37].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 37 Precipitation"
+        unique_id: weather_fc_37_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[37].precipitation }}
+
+      - name: "Weather FC 37 Precip Prob"
+        unique_id: weather_fc_37_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[37].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 37 Timestamp"
+        unique_id: weather_fc_37_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[37].datetime) }}
+
+      # ── Slot 38 ──────────────────────────────────────────
+      - name: "Weather FC 38 Condition"
+        unique_id: weather_fc_38_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[38].condition }}
+
+      - name: "Weather FC 38 Temperature"
+        unique_id: weather_fc_38_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[38].temperature | round(1) }}
+
+      - name: "Weather FC 38 Wind Speed"
+        unique_id: weather_fc_38_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[38].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 38 Precipitation"
+        unique_id: weather_fc_38_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[38].precipitation }}
+
+      - name: "Weather FC 38 Precip Prob"
+        unique_id: weather_fc_38_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[38].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 38 Timestamp"
+        unique_id: weather_fc_38_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[38].datetime) }}
+
+      # ── Slot 39 ──────────────────────────────────────────
+      - name: "Weather FC 39 Condition"
+        unique_id: weather_fc_39_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[39].condition }}
+
+      - name: "Weather FC 39 Temperature"
+        unique_id: weather_fc_39_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[39].temperature | round(1) }}
+
+      - name: "Weather FC 39 Wind Speed"
+        unique_id: weather_fc_39_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[39].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 39 Precipitation"
+        unique_id: weather_fc_39_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[39].precipitation }}
+
+      - name: "Weather FC 39 Precip Prob"
+        unique_id: weather_fc_39_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[39].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 39 Timestamp"
+        unique_id: weather_fc_39_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[39].datetime) }}
+
+      # ── Slot 40 ──────────────────────────────────────────
+      - name: "Weather FC 40 Condition"
+        unique_id: weather_fc_40_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[40].condition }}
+
+      - name: "Weather FC 40 Temperature"
+        unique_id: weather_fc_40_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[40].temperature | round(1) }}
+
+      - name: "Weather FC 40 Wind Speed"
+        unique_id: weather_fc_40_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[40].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 40 Precipitation"
+        unique_id: weather_fc_40_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[40].precipitation }}
+
+      - name: "Weather FC 40 Precip Prob"
+        unique_id: weather_fc_40_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[40].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 40 Timestamp"
+        unique_id: weather_fc_40_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[40].datetime) }}
+
+      # ── Slot 41 ──────────────────────────────────────────
+      - name: "Weather FC 41 Condition"
+        unique_id: weather_fc_41_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[41].condition }}
+
+      - name: "Weather FC 41 Temperature"
+        unique_id: weather_fc_41_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[41].temperature | round(1) }}
+
+      - name: "Weather FC 41 Wind Speed"
+        unique_id: weather_fc_41_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[41].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 41 Precipitation"
+        unique_id: weather_fc_41_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[41].precipitation }}
+
+      - name: "Weather FC 41 Precip Prob"
+        unique_id: weather_fc_41_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[41].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 41 Timestamp"
+        unique_id: weather_fc_41_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[41].datetime) }}
+
+      # ── Slot 42 ──────────────────────────────────────────
+      - name: "Weather FC 42 Condition"
+        unique_id: weather_fc_42_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[42].condition }}
+
+      - name: "Weather FC 42 Temperature"
+        unique_id: weather_fc_42_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[42].temperature | round(1) }}
+
+      - name: "Weather FC 42 Wind Speed"
+        unique_id: weather_fc_42_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[42].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 42 Precipitation"
+        unique_id: weather_fc_42_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[42].precipitation }}
+
+      - name: "Weather FC 42 Precip Prob"
+        unique_id: weather_fc_42_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[42].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 42 Timestamp"
+        unique_id: weather_fc_42_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[42].datetime) }}
+
+      # ── Slot 43 ──────────────────────────────────────────
+      - name: "Weather FC 43 Condition"
+        unique_id: weather_fc_43_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[43].condition }}
+
+      - name: "Weather FC 43 Temperature"
+        unique_id: weather_fc_43_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[43].temperature | round(1) }}
+
+      - name: "Weather FC 43 Wind Speed"
+        unique_id: weather_fc_43_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[43].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 43 Precipitation"
+        unique_id: weather_fc_43_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[43].precipitation }}
+
+      - name: "Weather FC 43 Precip Prob"
+        unique_id: weather_fc_43_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[43].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 43 Timestamp"
+        unique_id: weather_fc_43_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[43].datetime) }}
+
+      # ── Slot 44 ──────────────────────────────────────────
+      - name: "Weather FC 44 Condition"
+        unique_id: weather_fc_44_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[44].condition }}
+
+      - name: "Weather FC 44 Temperature"
+        unique_id: weather_fc_44_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[44].temperature | round(1) }}
+
+      - name: "Weather FC 44 Wind Speed"
+        unique_id: weather_fc_44_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[44].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 44 Precipitation"
+        unique_id: weather_fc_44_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[44].precipitation }}
+
+      - name: "Weather FC 44 Precip Prob"
+        unique_id: weather_fc_44_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[44].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 44 Timestamp"
+        unique_id: weather_fc_44_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[44].datetime) }}
+
+      # ── Slot 45 ──────────────────────────────────────────
+      - name: "Weather FC 45 Condition"
+        unique_id: weather_fc_45_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[45].condition }}
+
+      - name: "Weather FC 45 Temperature"
+        unique_id: weather_fc_45_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[45].temperature | round(1) }}
+
+      - name: "Weather FC 45 Wind Speed"
+        unique_id: weather_fc_45_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[45].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 45 Precipitation"
+        unique_id: weather_fc_45_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[45].precipitation }}
+
+      - name: "Weather FC 45 Precip Prob"
+        unique_id: weather_fc_45_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[45].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 45 Timestamp"
+        unique_id: weather_fc_45_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[45].datetime) }}
+
+      # ── Slot 46 ──────────────────────────────────────────
+      - name: "Weather FC 46 Condition"
+        unique_id: weather_fc_46_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[46].condition }}
+
+      - name: "Weather FC 46 Temperature"
+        unique_id: weather_fc_46_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[46].temperature | round(1) }}
+
+      - name: "Weather FC 46 Wind Speed"
+        unique_id: weather_fc_46_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[46].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 46 Precipitation"
+        unique_id: weather_fc_46_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[46].precipitation }}
+
+      - name: "Weather FC 46 Precip Prob"
+        unique_id: weather_fc_46_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[46].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 46 Timestamp"
+        unique_id: weather_fc_46_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[46].datetime) }}
+
+      # ── Slot 47 ──────────────────────────────────────────
+      - name: "Weather FC 47 Condition"
+        unique_id: weather_fc_47_condition
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[47].condition }}
+
+      - name: "Weather FC 47 Temperature"
+        unique_id: weather_fc_47_temperature
+        unit_of_measurement: "°C"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[47].temperature | round(1) }}
+
+      - name: "Weather FC 47 Wind Speed"
+        unique_id: weather_fc_47_wind_speed
+        unit_of_measurement: "m/s"
+        state: >
+          {{ (forecast_data['weather.forecast_home'].forecast[47].wind_speed | float / 3.6) | round(1) }}
+
+      - name: "Weather FC 47 Precipitation"
+        unique_id: weather_fc_47_precipitation
+        unit_of_measurement: "mm"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[47].precipitation }}
+
+      - name: "Weather FC 47 Precip Prob"
+        unique_id: weather_fc_47_precip_prob
+        unit_of_measurement: "%"
+        state: >
+          {{ forecast_data['weather.forecast_home'].forecast[47].precipitation_probability | default(0) }}
+
+      - name: "Weather FC 47 Timestamp"
+        unique_id: weather_fc_47_timestamp
+        state: >
+          {{ as_timestamp(forecast_data['weather.forecast_home'].forecast[47].datetime) }}
